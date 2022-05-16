@@ -18,4 +18,4 @@ function loadPage(clicked_id){
     })
 }
 
-document.getElementById("asda")
+// document.getElementById("asda")
