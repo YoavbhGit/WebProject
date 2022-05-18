@@ -1,13 +1,59 @@
-//Import the mongoose module
-var mongoose = require('mongoose');
+const dotenv = require("dotenv")
+dotenv.config({ path: './public/config/config.env'})
 
-//Set up default mongoose connection
-mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true});
+// Connection URL
+const url = process.env.MONGO_URI;
+// Database Name
+const dbName =  process.env.MONGO_DB_NAME;
 
-//Get the default connection
-var mydb = mongoose.connection;
+const MongoClient = require( 'mongodb' ).MongoClient;
+var _db;
+const connectDB = async (callback) => {
+    try {
+        MongoClient.connect(url, (err, db) => {
+            _db = db
+            return callback(err)
+        })
+    } catch (e) {
+        throw e
+    }
+}
 
-//Bind connection to error event (to get notification of connection errors)
-mydb.on('error', console.error.bind(console, 'MongoDB connection error:'));
+const getDB = () => _db
 
-module.exports = mydb;
+const disconnectDB = () => _db.close()
+
+module.exports = { connectDB, getDB, disconnectDB }
+
+// var MongoDB = require( './public/js/db');
+// MongoDB.connectDB(async (err) => {
+//     if (err) throw err;
+//     // Load db & collections
+//     var db = MongoDB.getDB();
+//     db = db.db(dbName);
+//     //Write your db action here
+
+//     MongoDB.disconnectDB();
+// });
+
+
+
+//############################### Print DB as JSON ##########################
+// const getCircularReplacer = () => {
+//     const seen = new WeakSet();
+//     return (key, value) => {
+//       if (typeof value === 'object' && value !== null) {
+//         if (seen.has(value)) {
+//           return;
+//         }
+//         seen.add(value);
+//       }
+//       return value;
+//     };
+//   };
+  
+//   database.name = database;
+  
+ 
+//   const result = JSON.stringify(database, getCircularReplacer());
+//   console.log(result);
